@@ -1,0 +1,24 @@
+{
+  "private": false,
+  "name": "vue-shopping-cart",
+  "version": "1.0.0",
+  "description": "E-3 Shopping Cart",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "files": [
+    "src/*"
+  ],
+  "keywords": [],
+  "author": "Philippe Bouillon",
+  "license": "ISC",
+  "peerDependencies": {
+    "bootstrap": "^4.4.1",
+    "bootstrap-vue": "^2.11.0",
+    "core-js": "^3.6.4",
+    "vue": "^2.6.11",
+    "vuex": "^3.4.0"
+  },
+  "dependencies": {}
+}
