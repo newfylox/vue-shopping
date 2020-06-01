@@ -1,1 +1,1 @@
-export { default as shopModule } from "./modules/shop";
+export { shopModule } from "./modules/shop";

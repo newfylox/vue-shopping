@@ -1,5 +1,6 @@
 import { shopModule } from "./store";
 import {
+  BraintreeForm,
   CartCheckout,
   CartMenuItem,
   CartModal,
@@ -13,12 +14,14 @@ export default {
         "Please initialise vue-shopping-cart plugin with a Vuex store."
       );
     }
-    options.store.registerModule("shop", shopModule);
+
+    options.store.registerModule("shop", shopModule(options.endpoints));
 
     Vue.prototype.$setShopProducts = (products) => {
       options.store.dispatch("shop/setProducts", products);
     };
 
+    Vue.component("ShopBraintreeForm", BraintreeForm)
     Vue.component("ShopCheckout", CartCheckout);
     Vue.component("ShopMenuItem", CartMenuItem);
     Vue.component("ShopCartModal", CartModal);

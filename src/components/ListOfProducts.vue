@@ -1,32 +1,34 @@
 <template>
-  <ul class="listOfProducts">
-    <li
-      v-for="(product, index) in getAllProducts"
-      :key="index"
-      class="product-item"
-    >
-      <img :src="product.image" alt="" />
-      <div class="product-name" @click="openProductModal(product)">
-        {{ product.name }}
-      </div>
-      <div class="product-price">
-        <span>{{ product.price * product.units }}</span>
-        <span>{{ product.units }} x {{ product.price }}</span>
-      </div>
-
-      <b-button
-        btnColor="btn btn-large btn-sucess"
-        @click="addProductToCart(product)"
+  <div class="wrapper">
+    <ul class="listOfProducts">
+      <li
+        v-for="(product, index) in getAllProducts"
+        :key="index"
+        class="product-item"
       >
-        {{ buttonText }}
-        <img
-          :src="!buttonLogo ? require('./assets/cart.svg') : buttonLogo"
-          alt="Cart Icon"
-        />
-      </b-button>
-    </li>
-    <ProductModal :detailsTitle="detailsTitle" :closeButton="closeButton" />
-  </ul>
+        <img class="img-fluid" :src="product.image_url" :alt="product.name" />
+        <div class="product-name" @click="openProductModal(product)">
+          {{ product.name }}
+        </div>
+        <div class="product-price">
+          <span>{{ product.price * product.units }}</span>
+          <span>{{ product.units }} x {{ product.price }}</span>
+        </div>
+
+        <b-button
+          btnColor="btn btn-large btn-sucess"
+          @click="addProductToCart(product.id)"
+        >
+          {{ buttonText }}
+          <img
+            :src="!buttonLogo ? require('./assets/cart.svg') : buttonLogo"
+            alt="Cart Icon"
+          />
+        </b-button>
+      </li>
+      <ProductModal :detailsTitle="detailsTitle" :closeButton="closeButton" />
+    </ul>
+  </div>
 </template>
 
 <script>
@@ -71,7 +73,7 @@ export default {
   margin: 0 auto;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
+  justify-content: flex-start;
   padding: 0;
 }
 
@@ -104,5 +106,11 @@ export default {
   display: flex;
   justify-content: space-between;
   margin-bottom: 0.5em;
+}
+
+.wrapper {
+  align-items: center;
+  display: flex;
+  /* justify-content: center; */
 }
 </style>

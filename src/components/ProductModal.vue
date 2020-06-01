@@ -8,7 +8,7 @@
     >
       <div class="product-box row">
         <div class="product-image col">
-          <img class="img-fluid" :src="currentProduct.image" alt="" />
+          <img class="img-fluid" :src="currentProduct.image_url" :alt="currentProduct.name" />
         </div>
         <div class="product-info col">
           <h2 class="product-title">{{ currentProduct.name }}</h2>
@@ -20,7 +20,7 @@
       <div class="product-details">
         <div>
           <h3>{{ detailsTitle }}</h3>
-          {{ currentProduct.details }}
+          {{ currentProduct.description }}
         </div>
         <!-- <div class="text-right">
           <b-button

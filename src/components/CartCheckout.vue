@@ -1,17 +1,15 @@
 <template>
   <div class="checkout-box">
     <div>
-      <router-link v-if="hasProduct()" :to="backTo">{{
-        backToText
-      }}</router-link>
+      <router-link v-if="hasProduct" :to="backTo">{{ backToText }}</router-link>
     </div>
     <ul class="checkout-list">
       <li
-        v-for="(product, index) in getProductsInCart"
+        v-for="(product, index) in getCartProducts"
         :key="`${index}-${product.id}`"
         class="checkout-product"
       >
-        <img :src="product.image" alt="" class="product-image" />
+        <img :src="product.image_url" alt="" class="product-image img-fluid" />
         <h3 class="product-name">{{ product.name }}</h3>
         <span class="product-price">{{ product.price }}</span>
         <b-button variant="danger" @click="remove(index)"
@@ -19,32 +17,37 @@
         ></b-button>
       </li>
     </ul>
-    <div v-if="!hasProduct()" class="checkout-message">
+    <div v-if="!hasProduct" class="checkout-message">
       <h3>{{ noItemsText }}</h3>
       <router-link :to="backTo">{{ backToText }}</router-link>
     </div>
-    <h3 class="total" v-if="hasProduct()">
-      {{ totalText }}: {{ totalPrice() }}
-    </h3>
+    <h3 class="total" v-if="hasProduct">{{ totalText }}: {{ totalPrice() }}</h3>
   </div>
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex";
+import dropin from "braintree-web-drop-in";
 
 export default {
   props: ["backTo", "backToText", "noItemsText", "totalText"],
-  computed: {
-    ...mapGetters({ getProductsInCart: "shop/getProductsInCart" }),
+  created() {
+    this.loadCartProducts();
   },
-
+  computed: {
+    ...mapGetters({
+      getCartProducts: "shop/getCartProducts",
+      getCartProductIds: "shop/getCartProductIds",
+      hasProduct: "shop/hasProduct",
+    }),
+  },
   methods: {
-    ...mapActions({ removeProduct: "shop/removeProduct" }),
-    hasProduct() {
-      return this.getProductsInCart.length > 0;
-    },
+    ...mapActions({
+      loadCartProducts: "shop/loadCartProducts",
+      removeProduct: "shop/removeProduct",
+    }),
     totalPrice() {
-      return this.getProductsInCart.reduce(
+      return this.getCartProducts.reduce(
         (current, next) => current + next.price,
         0
       );
@@ -88,7 +91,6 @@ export default {
 }
 .product-image {
   grid-column: 1/2;
-  width: 50%;
 }
 
 .product-name {
@@ -118,16 +120,5 @@ export default {
 
 .checkout-message {
   font-size: 1.5em;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: all 0.5s;
-}
-
-.fade-enter,
-.fade-leave-to {
-  transform: translateX(-40px);
-  opacity: 0;
 }
 </style>
