@@ -67,7 +67,7 @@ export default {
       showOrHiddenPopupCart: "shop/showOrHiddenPopupCart",
     }),
     hasProduct() {
-      return this.getCartProductIds.length > 0;
+      return this.getCartProductSkus.length > 0;
     },
     totalPrice(products) {
       return products.reduce((current, next) => current + next.price, 0);
@@ -76,7 +76,7 @@ export default {
   computed: {
     ...mapGetters({
       getPopupCart: "shop/getPopupCart",
-      getCartProductIds: "shop/getCartProductIds",
+      getCartProductSkus: "shop/getCartProductSkus",
       getCartProducts: "shop/getCartProducts",
     }),
   },

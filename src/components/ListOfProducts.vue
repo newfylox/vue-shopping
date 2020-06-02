@@ -17,7 +17,7 @@
             <span>{{ product.units }} X</span>
           </div>
           <div class="shop-button">
-            <b-button @click="addProductToCart(product.id)">
+            <b-button @click="addProductToCart(product.sku)">
               {{ buttonText }}
               <img
                 :src="!buttonLogo ? require('./assets/cart.svg') : buttonLogo"
@@ -48,8 +48,8 @@ export default {
       showOrHiddenProductModal: "shop/showOrHiddenProductModal",
     }),
 
-    addProductToCart(product) {
-      this.addProduct(product);
+    addProductToCart(productSku) {
+      this.addProduct(productSku);
     },
     openProductModal(product) {
       this.currentProduct(product);

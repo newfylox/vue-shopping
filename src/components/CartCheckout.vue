@@ -6,7 +6,7 @@
     <ul class="checkout-list">
       <li
         v-for="(product, index) in getCartProducts"
-        :key="`${index}-${product.id}`"
+        :key="`${index}-${product.sku}`"
         class="checkout-product"
       >
         <img :src="product.image_url" alt="" class="product-image img-fluid" />
@@ -21,7 +21,9 @@
       <h3>{{ noItemsText }}</h3>
       <router-link :to="backTo">{{ backToText }}</router-link>
     </div>
-    <h3 class="total" v-if="hasProduct">{{ totalText }}: ${{ totalPrice() }}</h3>
+    <h3 class="total" v-if="hasProduct">
+      {{ totalText }}: ${{ totalPrice() }}
+    </h3>
   </div>
 </template>
 
@@ -37,7 +39,6 @@ export default {
   computed: {
     ...mapGetters({
       getCartProducts: "shop/getCartProducts",
-      getCartProductIds: "shop/getCartProductIds",
       hasProduct: "shop/hasProduct",
     }),
   },

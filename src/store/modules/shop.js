@@ -2,8 +2,8 @@ export const shopModule = (endpoints) => {
   const state = {
     products: [],
     cartProducts: [],
-    cartProductIds: localStorage.cartProductIds
-      ? JSON.parse(localStorage.cartProductIds)
+    cartProductSkus: localStorage.cartProductSkus
+      ? JSON.parse(localStorage.cartProductSkus)
       : [],
     currentProduct: {},
     showProductModal: false,
@@ -17,16 +17,16 @@ export const shopModule = (endpoints) => {
       });
     },
     loadCart: ({ getters }) => {
-      return endpoints.loadCart(getters.getCartProductIds);
+      return endpoints.loadCart(getters.getCartProductSkus);
     },
     checkout: ({}, payload) => {
       return endpoints.checkout(payload);
     },
     loadCartProducts: ({ dispatch, getters, commit }) => {
       const cartProducts = [];
-      getters.getCartProductIds.forEach((id, index) => {
+      getters.getCartProductSkus.forEach((sku, index) => {
         endpoints
-          .getProduct(id)
+          .getProduct(sku)
           .then((product) => {
             cartProducts.push(product);
           })
@@ -43,15 +43,15 @@ export const shopModule = (endpoints) => {
     setProducts: ({ commit }, products) => {
       commit("SET_PRODUCTS", products);
     },
-    addProduct: (context, productId) => {
-      context.commit("ADD_PRODUCT", productId);
+    addProduct: (context, productSku) => {
+      context.commit("ADD_PRODUCT", productSku);
     },
     removeProduct: (context, index) => {
       context.commit("REMOVE_PRODUCT", index);
     },
     clearCart: (context) => {
       context.commit("CLEAR_CART_PRODUCTS");
-      context.commit("CLEAR_CART_PRODUCTS_IDS");
+      context.commit("CLEAR_CART_PRODUCTS_SKUS");
     },
     currentProduct: (context, product) => {
       context.commit("CURRENT_PRODUCT", product);
@@ -61,11 +61,7 @@ export const shopModule = (endpoints) => {
     },
     showOrHiddenPopupCart: (context) => {
       context.commit("SHOW_POPUP_CART");
-      if (context.getters.getPopupCart) {
-        context.dispatch("loadCartProducts");
-      } else {
-        context.commit("CLEAR_CART_PRODUCTS");
-      }
+      context.dispatch("loadCartProducts");
     },
   };
 
@@ -73,9 +69,9 @@ export const shopModule = (endpoints) => {
     CLEAR_CART_PRODUCTS: (state) => {
       state.cartProducts = [];
     },
-    CLEAR_CART_PRODUCTS_IDS: (state) => {
-      state.cartProductIds = [];
-      localStorage.cartProductIds = JSON.stringify([]);
+    CLEAR_CART_PRODUCTS_SKUS: (state) => {
+      state.cartProductSkus = [];
+      localStorage.cartProductSkus = JSON.stringify([]);
     },
     SET_CART_PRODUCTS: (state, cartProducts) => {
       state.cartProducts = cartProducts;
@@ -83,13 +79,17 @@ export const shopModule = (endpoints) => {
     SET_PRODUCTS: (state, products) => {
       state.products = products;
     },
-    ADD_PRODUCT: (state, productId) => {
-      state.cartProductIds.push(productId);
-      localStorage.cartProductIds = JSON.stringify(state.cartProductIds);
+    ADD_PRODUCT: (state, productSku) => {
+      state.cartProductSkus.push(productSku);
+      localStorage.cartProductSkus = JSON.stringify(state.cartProductSkus);
     },
     REMOVE_PRODUCT: (state, index) => {
-      state.cartProductIds.splice(index, 1);
-      localStorage.cartProductIds = JSON.stringify(state.cartProductIds);
+      state.cartProducts.splice(index, 1);
+      const cartProductSkus = state.cartProducts.map(function (p) {
+        return p.sku;
+      });
+      state.cartProductSkus = cartProductSkus;
+      localStorage.cartProductSkus = JSON.stringify(cartProductSkus);
     },
     CURRENT_PRODUCT: (state, product) => {
       state.currentProduct = product;
@@ -105,11 +105,11 @@ export const shopModule = (endpoints) => {
   const getters = {
     getAllProducts: (state) => state.products,
     getCartProducts: (state) => state.cartProducts,
-    getCartProductIds: (state) => state.cartProductIds,
+    getCartProductSkus: (state) => state.cartProductSkus,
     getCurrentProduct: (state) => state.currentProduct,
     getShowProductModal: (state) => state.showProductModal,
     getPopupCart: (state) => state.showPopupCart,
-    hasProduct: (state) => state.cartProductIds.length > 0,
+    hasProduct: (state) => state.cartProductSkus.length > 0,
   };
 
   return {

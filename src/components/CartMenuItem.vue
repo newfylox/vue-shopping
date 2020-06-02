@@ -2,7 +2,7 @@
   <div>
     <slot
       :click="showOrHiddenPopupCart"
-      :count="getCartProductIds.length"
+      :count="getCartProductSkus.length"
     ></slot>
   </div>
 </template>
@@ -16,7 +16,7 @@ export default {
   },
   computed: {
     ...mapGetters({
-      getCartProductIds: "shop/getCartProductIds",
+      getCartProductSkus: "shop/getCartProductSkus",
     }),
   },
 };
