@@ -27,13 +27,13 @@
           <h5>{{ product.name }}</h5>
           <!-- <div class="float-left">Amount: 1</div>
           <div class="float-right">{{ product.price }}</div> -->
-          <div>{{ priceText }}: {{ product.price }}</div>
+          <div>{{ priceText }}: ${{ product.price }}</div>
         </div>
       </div>
       <div class="row align-items-end" v-if="hasProduct()">
         <div class="col">
           <span class="float-left"
-            >{{ totalText }}: {{ totalPrice(getCartProducts) }}</span
+            >{{ totalText }}: ${{ totalPrice(getCartProducts) }}</span
           >
         </div>
         <div class="col">

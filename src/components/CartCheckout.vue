@@ -11,7 +11,7 @@
       >
         <img :src="product.image_url" alt="" class="product-image img-fluid" />
         <h3 class="product-name">{{ product.name }}</h3>
-        <span class="product-price">{{ product.price }}</span>
+        <span class="product-price">${{ product.price }}</span>
         <b-button variant="danger" @click="remove(index)"
           ><b-icon icon="trash" aria-label="Help"></b-icon
         ></b-button>
@@ -21,7 +21,7 @@
       <h3>{{ noItemsText }}</h3>
       <router-link :to="backTo">{{ backToText }}</router-link>
     </div>
-    <h3 class="total" v-if="hasProduct">{{ totalText }}: {{ totalPrice() }}</h3>
+    <h3 class="total" v-if="hasProduct">{{ totalText }}: ${{ totalPrice() }}</h3>
   </div>
 </template>
 

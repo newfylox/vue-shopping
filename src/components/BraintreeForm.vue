@@ -17,7 +17,7 @@ import { mapActions, mapGetters } from "vuex";
 import dropin from "braintree-web-drop-in";
 
 export default {
-  props: ["buttonText"],
+  props: ["buttonText", "confirmBuyText", "okButtonText", "cancelButtonText"],
   data() {
     return {
       instance: null,
@@ -71,10 +71,10 @@ export default {
       this.loadCart()
         .then((total) => {
           this.$bvModal
-            .msgBoxConfirm(`Continuer l'achat? ($ ${total})`, {
-              okTitle: "oui",
+            .msgBoxConfirm(`${this.confirmBuyText} ($${total})`, {
+              okTitle: this.okButtonText,
               okVariant: "success",
-              cancelTitle: "annuler",
+              cancelTitle: this.cancelButtonText,
               cancelVariant: "danger",
             })
             .then((value) => {
