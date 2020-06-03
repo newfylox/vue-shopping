@@ -17,7 +17,13 @@ import { mapActions, mapGetters } from "vuex";
 import dropin from "braintree-web-drop-in";
 
 export default {
-  props: ["buttonText", "confirmBuyText", "okButtonText", "cancelButtonText"],
+  props: [
+    "buttonText",
+    "confirmBuyText",
+    "okButtonText",
+    "cancelButtonText",
+    "saveProfile",
+  ],
   data() {
     return {
       instance: null,
@@ -61,7 +67,7 @@ export default {
       );
     },
     pay() {
-      this.instance.requestPaymentMethod(this.callback);
+      this.saveProfile(() => this.instance.requestPaymentMethod(this.callback));
     },
     callback(requestPaymentMethodErr, payload) {
       if (requestPaymentMethodErr) {
