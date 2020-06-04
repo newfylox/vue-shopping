@@ -8,7 +8,11 @@
     >
       <div class="product-box row">
         <div class="product-image col">
-          <img class="img-fluid" :src="currentProduct.image_url" :alt="currentProduct.name" />
+          <img
+            class="img-fluid"
+            :src="currentProduct.image_url"
+            :alt="currentProduct.name"
+          />
         </div>
         <div class="product-info col">
           <h2 class="product-title">{{ currentProduct.name }}</h2>
@@ -22,15 +26,6 @@
           <h3>{{ detailsTitle }}</h3>
           {{ currentProduct.description }}
         </div>
-        <!-- <div class="text-right">
-          <b-button
-            variant="success"
-            class="btn btn-large btn-sucess"
-            @click="addProductToCart(currentProduct)"
-          >
-            Add To Cart
-          </b-button>
-        </div> -->
         <div class="text-right">
           <b-button
             variant="primary"

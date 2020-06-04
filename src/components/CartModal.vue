@@ -8,7 +8,6 @@
       :visible="getPopupCart"
       @hide="showOrHiddenPopupCart"
     >
-      <span v-if="!hasProduct()"></span>
       <div
         v-for="(product, index) in getCartModalProducts"
         :key="index"
@@ -25,8 +24,6 @@
         </div>
         <div class="col-7" style="max-height: 130px;">
           <h5>{{ product.name }}</h5>
-          <!-- <div class="float-left">Amount: 1</div>
-          <div class="float-right">{{ product.price }}</div> -->
           <div>{{ priceText }}: ${{ product.price }}</div>
         </div>
       </div>
@@ -62,9 +59,13 @@ export default {
       products: [],
     };
   },
+  created() {
+    this.loadCartModalProducts();
+  },
   methods: {
     ...mapActions({
       showOrHiddenPopupCart: "shop/showOrHiddenPopupCart",
+      loadCartModalProducts: "shop/loadCartModalProducts",
     }),
     hasProduct() {
       return this.getCartProductSkus.length > 0;

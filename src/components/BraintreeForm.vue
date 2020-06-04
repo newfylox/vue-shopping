@@ -1,10 +1,22 @@
 <template>
   <div>
     <div v-if="!payed" v-show="hasProduct">
-      <div id="dropin-container"></div>
-      <b-button id="submit-button" variant="success" @click="pay()">{{
-        buttonText
-      }}</b-button>
+      <b-card bg-variant="light">
+        <b-form-group
+          :label="representativeCodeText"
+          label-for="representative-code"
+        >
+          <b-form-input
+            id="representative-code"
+            v-model="representativeCode"
+            type="text"
+          ></b-form-input>
+        </b-form-group>
+        <div id="dropin-container"></div>
+        <b-button id="submit-button" variant="success" @click="pay()">{{
+          buttonText
+        }}</b-button>
+      </b-card>
     </div>
     <div v-else>
       <slot />
@@ -23,11 +35,13 @@ export default {
     "okButtonText",
     "cancelButtonText",
     "saveProfile",
+    "representativeCodeText",
   ],
   data() {
     return {
       instance: null,
       payed: false,
+      representativeCode: "",
     };
   },
   created() {
@@ -85,7 +99,10 @@ export default {
             })
             .then((value) => {
               if (value === true) {
-                this.checkout(payload)
+                this.checkout({
+                  payload,
+                  representativeCode: this.representativeCode,
+                })
                   .then(() => {
                     this.clearCart();
                     this.payed = true;

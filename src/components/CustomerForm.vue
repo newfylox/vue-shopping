@@ -1,20 +1,21 @@
 <template>
-  <div v-show="hasProduct">
-    <div v-for="(profile, index) in forms" :key="profile.id">
+  <div>
+    <div v-for="(profile, index) in forms" :key="profile.id" v-show="hasProduct">
       <b-form>
         <b-row align-h="center">
           <b-col cols="8">
             <b-card bg-variant="light">
+              <p>{{$t('shop.customer_form.header_privacy')}}</p>
               <b-form-group
                 label-cols-lg="3"
-                label="Your Informations"
+                :label="$t('shop.customer_form.informations')"
                 label-size="lg"
                 label-class="font-weight-bold pt-0"
                 class="mb-0"
               >
                 <b-form-group
                   label-cols-sm="3"
-                  label="Name:"
+                  :label="$t('shop.customer_form.name')"
                   label-align-sm="right"
                   :label-for="`name-${index}`"
                 >
@@ -29,22 +30,7 @@
 
                 <b-form-group
                   label-cols-sm="3"
-                  label="Email:"
-                  label-align-sm="right"
-                  :label-for="`email-${index}`"
-                >
-                  <b-form-input
-                    :id="`email-${index}`"
-                    type="email"
-                    name="email"
-                    :state="errors[`email${index}`]"
-                    v-model="forms[index].email"
-                  ></b-form-input>
-                </b-form-group>
-
-                <b-form-group
-                  label-cols-sm="3"
-                  label="Phone:"
+                  :label="$t('shop.customer_form.phone')"
                   label-align-sm="right"
                   :label-for="`phone-${index}`"
                 >
@@ -59,7 +45,7 @@
 
                 <b-form-group
                   label-cols-sm="3"
-                  label="Street:"
+                  :label="$t('shop.customer_form.street')"
                   label-align-sm="right"
                   :label-for="`street-${index}`"
                 >
@@ -72,7 +58,7 @@
 
                 <b-form-group
                   label-cols-sm="3"
-                  label="City:"
+                  :label="$t('shop.customer_form.city')"
                   label-align-sm="right"
                   :label-for="`city-${index}`"
                 >
@@ -85,7 +71,7 @@
 
                 <b-form-group
                   label-cols-sm="3"
-                  label="State:"
+                  :label="$t('shop.customer_form.state')"
                   label-align-sm="right"
                   :label-for="`state-${index}`"
                 >
@@ -98,7 +84,7 @@
 
                 <b-form-group
                   label-cols-sm="3"
-                  label="Country:"
+                  :label="$t('shop.customer_form.country')"
                   label-align-sm="right"
                   :label-for="`country-${index}`"
                 >
@@ -110,7 +96,7 @@
                 </b-form-group>
                 <b-form-group
                   label-cols-sm="3"
-                  label="Make default:"
+                  :label="$t('shop.customer_form.make_default')"
                   label-align-sm="right"
                   :label-for="`default-${index}`"
                 >
@@ -169,10 +155,10 @@ export default {
         this.onSubmit(this.defaultIndex, callBack);
       } else {
         this.$bvToast.toast(
-          "Veuillez choisir un profil d'informations personnelles par défaut!",
+          this.$t('shop.customer_form.warning_default'),
           {
             toaster: "b-toaster-top-right",
-            variant: "danger",
+            variant: "warning",
             solid: true,
             appendToast: true,
           }

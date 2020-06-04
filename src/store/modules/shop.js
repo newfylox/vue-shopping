@@ -20,6 +20,7 @@ export const shopModule = (endpoints) => {
           cartProducts.push(product);
         })
         .catch((e) => {
+          console.log(2);
           if (e.response.status == 404) {
             dispatch("removeProduct", index);
           } else {
@@ -39,9 +40,13 @@ export const shopModule = (endpoints) => {
     loadCart: ({ getters }) => {
       return endpoints.loadCart(getters.getCartProductSkus);
     },
-    checkout: ({ rootGetters }, payload) => {
+    checkout: ({ rootGetters }, { payload, representativeCode }) => {
       const profileId = rootGetters["profile/defaultProfileId"];
-      return endpoints.checkout({ payload: payload, profile_id: profileId });
+      return endpoints.checkout({
+        payload: payload,
+        profile_id: profileId,
+        representative_code: representativeCode,
+      });
     },
     loadCartProducts: ({ dispatch, getters, commit }) => {
       const cartProducts = loadProducts({ dispatch, getters });
