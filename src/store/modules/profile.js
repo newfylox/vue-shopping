@@ -18,6 +18,9 @@ export const profileModule = (endpoints) => {
         commit("SET_DEFAULT_PROFILE_ID", profile.id);
       });
     },
+    setDefaultProfileId: ({ commit }, profileId) => {
+      commit("SET_DEFAULT_PROFILE_ID", profileId);
+    },
   };
 
   const mutations = {

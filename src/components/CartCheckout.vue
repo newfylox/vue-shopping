@@ -1,29 +1,44 @@
 <template>
   <div class="checkout-box">
-    <div>
-      <router-link v-if="hasProduct" :to="backTo">{{ backToText }}</router-link>
+    <div v-if="hasProduct && !defaultProfileId">
+      <div>
+        <p>
+          <router-link :to="backTo">{{
+            $t("shop.cart_checkout.back_to_products")
+          }}</router-link>
+        </p>
+      </div>
+      <div id="cart-checkout-title">
+        <h4>{{ $t("shop.cart_checkout.title") }}</h4>
+      </div>
+      <ul class="checkout-list">
+        <li
+          v-for="(product, index) in getCartProducts"
+          :key="`${index}-${product.sku}`"
+          class="checkout-product"
+        >
+          <img
+            :src="product.image_url"
+            alt=""
+            class="product-image img-fluid"
+          />
+          <h3 class="product-name">{{ product.name }}</h3>
+          <span class="product-price">${{ product.price }}</span>
+          <b-button variant="danger" @click="remove(index)"
+            ><b-icon icon="trash" aria-label="Help"></b-icon
+          ></b-button>
+        </li>
+      </ul>
+      <h3 class="total">
+        {{ $t("shop.cart_checkout.total") }} ${{ totalPrice() }}
+      </h3>
     </div>
-    <ul class="checkout-list">
-      <li
-        v-for="(product, index) in getCartProducts"
-        :key="`${index}-${product.sku}`"
-        class="checkout-product"
-      >
-        <img :src="product.image_url" alt="" class="product-image img-fluid" />
-        <h3 class="product-name">{{ product.name }}</h3>
-        <span class="product-price">${{ product.price }}</span>
-        <b-button variant="danger" @click="remove(index)"
-          ><b-icon icon="trash" aria-label="Help"></b-icon
-        ></b-button>
-      </li>
-    </ul>
     <div v-if="!hasProduct" class="checkout-message">
-      <h3>{{ noItemsText }}</h3>
-      <router-link :to="backTo">{{ backToText }}</router-link>
+      <h3>{{ $t("shop.cart_checkout.no_products") }}</h3>
+      <router-link :to="backTo">{{
+        $t("shop.cart_checkout.back_to_products")
+      }}</router-link>
     </div>
-    <h3 class="total" v-if="hasProduct">
-      {{ totalText }}: ${{ totalPrice() }}
-    </h3>
   </div>
 </template>
 
@@ -32,7 +47,7 @@ import { mapGetters, mapActions } from "vuex";
 import dropin from "braintree-web-drop-in";
 
 export default {
-  props: ["backTo", "backToText", "noItemsText", "totalText"],
+  props: ["backTo"],
   created() {
     this.loadCartProducts();
   },
@@ -40,6 +55,7 @@ export default {
     ...mapGetters({
       getCartProducts: "shop/getCartProducts",
       hasProduct: "shop/hasProduct",
+      defaultProfileId: "profile/defaultProfileId",
     }),
   },
   methods: {

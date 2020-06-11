@@ -1,11 +1,11 @@
 <template>
-  <div>
-    <div v-for="(profile, index) in forms" :key="profile.id" v-show="hasProduct">
+  <div v-if="hasProduct && !defaultProfileId">
+    <div v-for="(profile, index) in forms" :key="profile.id">
       <b-form>
-        <b-row align-h="center">
+        <b-row>
           <b-col cols="8">
             <b-card bg-variant="light">
-              <p>{{$t('shop.customer_form.header_privacy')}}</p>
+              <p>{{ $t("shop.customer_form.header_privacy") }}</p>
               <b-form-group
                 label-cols-lg="3"
                 :label="$t('shop.customer_form.informations')"
@@ -108,12 +108,18 @@
                   />
                 </b-form-group>
               </b-form-group>
+              <b-button
+                class="pull-right"
+                :id="`button-${index}`"
+                variant="success"
+                @click="onSubmit()"
+                >{{ $t("shop.customer_form.button_next") }}</b-button
+              >
             </b-card>
           </b-col>
         </b-row>
       </b-form>
     </div>
-    <slot :saveProfile="saveProfile"></slot>
   </div>
 </template>
 
@@ -140,6 +146,7 @@ export default {
     ...mapGetters({
       profiles: "profile/profiles",
       hasProduct: "shop/hasProduct",
+      defaultProfileId: "profile/defaultProfileId",
     }),
     isValid(index, key) {
       return this.errors[`${key}${index}`];
@@ -150,33 +157,28 @@ export default {
       getProfiles: "profile/getProfiles",
       updateProfile: "profile/updateProfile",
     }),
-    saveProfile(callBack) {
+    onSubmit() {
       if (this.defaultIndex != null) {
-        this.onSubmit(this.defaultIndex, callBack);
+        this.saveProfile(this.defaultIndex);
       } else {
-        this.$bvToast.toast(
-          this.$t('shop.customer_form.warning_default'),
-          {
-            toaster: "b-toaster-top-right",
-            variant: "warning",
-            solid: true,
-            appendToast: true,
-          }
-        );
+        this.$bvToast.toast(this.$t("shop.customer_form.warning_default"), {
+          toaster: "b-toaster-top-right",
+          variant: "warning",
+          solid: true,
+          appendToast: true,
+        });
       }
     },
-    onSubmit(index, callBack) {
+    saveProfile(index) {
       const profile = this.forms[index];
       this.clearErrors(index, profile);
-      return this.updateProfile(profile)
-        .then(() => callBack())
-        .catch((e) => {
-          if (e.response && e.response.status == 422) {
-            this.setErrors(index, e.response.data.errors);
-          } else {
-            console.error(e);
-          }
-        });
+      return this.updateProfile(profile).catch((e) => {
+        if (e.response && e.response.status == 422) {
+          this.setErrors(index, e.response.data.errors);
+        } else {
+          console.error(e);
+        }
+      });
     },
     clearErrors(index, profile) {
       for (const key in profile) {

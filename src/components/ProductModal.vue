@@ -16,9 +16,7 @@
         </div>
         <div class="product-info col">
           <h2 class="product-title">{{ currentProduct.name }}</h2>
-          <p class="product-price">
-            ${{ currentProduct.price * currentProduct.units }}
-          </p>
+          <p class="product-price">${{ currentProduct.price }}</p>
         </div>
       </div>
       <div class="product-details">

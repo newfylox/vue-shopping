@@ -1,4 +1,4 @@
-export const shopModule = (endpoints) => {
+export const shopModule = (endpoints, axios) => {
   const state = {
     products: [],
     cartProducts: [],
@@ -20,7 +20,6 @@ export const shopModule = (endpoints) => {
           cartProducts.push(product);
         })
         .catch((e) => {
-          console.log(2);
           if (e.response.status == 404) {
             dispatch("removeProduct", index);
           } else {
@@ -32,9 +31,19 @@ export const shopModule = (endpoints) => {
   };
 
   const actions = {
+    getProducts: ({ dispatch }) => {
+      return axios.get("products").then((res) => {
+        dispatch("setProducts", res.data);
+      });
+    },
     getClientToken: () => {
       return endpoints.getClientToken().then((data) => {
         return data.token;
+      });
+    },
+    getPublishableKey: () => {
+      return axios.get("transactions/new").then((res) => {
+        return res.data.publishable_key;
       });
     },
     loadCart: ({ getters }) => {
@@ -47,6 +56,18 @@ export const shopModule = (endpoints) => {
         profile_id: profileId,
         representative_code: representativeCode,
       });
+    },
+    createPayment: ({ rootGetters }, { representativeCode, token }) => {
+      const profileId = rootGetters["profile/defaultProfileId"];
+      return endpoints
+        .createPayment({
+          profile_id: profileId,
+          representative_code: representativeCode,
+          token: token,
+        })
+        .then((data) => {
+          return data.client_secret;
+        });
     },
     loadCartProducts: ({ dispatch, getters, commit }) => {
       const cartProducts = loadProducts({ dispatch, getters });
