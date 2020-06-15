@@ -14,7 +14,6 @@
           </div>
           <div class="product-price">
             <span>${{ product.price }}</span>
-            <span>{{ product.units }} X</span>
           </div>
           <div class="shop-button">
             <b-button @click="addProductToCart(product.sku)">
@@ -41,10 +40,14 @@ export default {
   components: {
     ProductModal,
   },
+  created() {
+    this.getProducts();
+  },
   methods: {
     ...mapActions({
       addProduct: "shop/addProduct",
       currentProduct: "shop/currentProduct",
+      getProducts: "shop/getProducts",
       showOrHiddenProductModal: "shop/showOrHiddenProductModal",
     }),
 

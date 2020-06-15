@@ -1,7 +1,8 @@
-export const shopModule = (endpoints) => {
+export const shopModule = (endpoints, axios) => {
   const state = {
     products: [],
     cartProducts: [],
+    cartModalProducts: [],
     cartProductSkus: localStorage.cartProductSkus
       ? JSON.parse(localStorage.cartProductSkus)
       : [],
@@ -10,35 +11,71 @@ export const shopModule = (endpoints) => {
     showPopupCart: false,
   };
 
+  const loadProducts = ({ dispatch, getters }) => {
+    const cartProducts = [];
+    getters.getCartProductSkus.forEach((sku, index) => {
+      endpoints
+        .getProduct(sku)
+        .then((product) => {
+          cartProducts.push(product);
+        })
+        .catch((e) => {
+          if (e.response.status == 404) {
+            dispatch("removeProduct", index);
+          } else {
+            return Promise.reject(e);
+          }
+        });
+    });
+    return cartProducts;
+  };
+
   const actions = {
+    getProducts: ({ dispatch }) => {
+      return axios.get("products").then((res) => {
+        dispatch("setProducts", res.data);
+      });
+    },
     getClientToken: () => {
       return endpoints.getClientToken().then((data) => {
         return data.token;
       });
     },
+    getPublishableKey: () => {
+      return axios.get("transactions/new").then((res) => {
+        return res.data.publishable_key;
+      });
+    },
     loadCart: ({ getters }) => {
       return endpoints.loadCart(getters.getCartProductSkus);
     },
-    checkout: ({}, payload) => {
-      return endpoints.checkout(payload);
+    checkout: ({ rootGetters }, { payload, representativeCode }) => {
+      const profileId = rootGetters["profile/defaultProfileId"];
+      return endpoints.checkout({
+        payload: payload,
+        profile_id: profileId,
+        representative_code: representativeCode,
+      });
+    },
+    createPayment: ({ rootGetters }, { representativeCode, token }) => {
+      const profileId = rootGetters["profile/defaultProfileId"];
+      return endpoints
+        .createPayment({
+          profile_id: profileId,
+          representative_code: representativeCode,
+          token: token,
+        })
+        .then((data) => {
+          return data.client_secret;
+        });
     },
     loadCartProducts: ({ dispatch, getters, commit }) => {
-      const cartProducts = [];
-      getters.getCartProductSkus.forEach((sku, index) => {
-        endpoints
-          .getProduct(sku)
-          .then((product) => {
-            cartProducts.push(product);
-          })
-          .catch((e) => {
-            if (e.response.status == 404) {
-              dispatch("removeProduct", index);
-            } else {
-              return Promise.reject(e);
-            }
-          });
-        commit("SET_CART_PRODUCTS", cartProducts);
-      });
+      const cartProducts = loadProducts({ dispatch, getters });
+      commit("SET_CART_PRODUCTS", cartProducts);
+    },
+    loadCartModalProducts: ({ dispatch, getters, commit }) => {
+      const cartProducts = loadProducts({ dispatch, getters });
+      commit("SET_CART_MODAL_PRODUCTS", cartProducts);
     },
     setProducts: ({ commit }, products) => {
       commit("SET_PRODUCTS", products);
@@ -60,8 +97,10 @@ export const shopModule = (endpoints) => {
       context.commit("SHOW_MODAL");
     },
     showOrHiddenPopupCart: (context) => {
+      if (!context.getters.getPopupCart) {
+        context.dispatch("loadCartModalProducts");
+      }
       context.commit("SHOW_POPUP_CART");
-      context.dispatch("loadCartProducts");
     },
   };
 
@@ -75,6 +114,9 @@ export const shopModule = (endpoints) => {
     },
     SET_CART_PRODUCTS: (state, cartProducts) => {
       state.cartProducts = cartProducts;
+    },
+    SET_CART_MODAL_PRODUCTS: (state, cartProducts) => {
+      state.cartModalProducts = cartProducts;
     },
     SET_PRODUCTS: (state, products) => {
       state.products = products;
@@ -105,6 +147,7 @@ export const shopModule = (endpoints) => {
   const getters = {
     getAllProducts: (state) => state.products,
     getCartProducts: (state) => state.cartProducts,
+    getCartModalProducts: (state) => state.cartModalProducts,
     getCartProductSkus: (state) => state.cartProductSkus,
     getCurrentProduct: (state) => state.currentProduct,
     getShowProductModal: (state) => state.showProductModal,

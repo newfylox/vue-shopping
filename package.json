@@ -1,11 +1,11 @@
 {
   "private": false,
-  "name": "vue-shopping-cart",
-  "version": "1.0.1",
+  "name": "vue-shopping",
+  "version": "1.0.2",
   "description": "E-3 Shopping Cart",
   "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\""
   },
   "files": [
     "src/*"

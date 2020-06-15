@@ -8,9 +8,8 @@
       :visible="getPopupCart"
       @hide="showOrHiddenPopupCart"
     >
-      <span v-if="!hasProduct()"></span>
       <div
-        v-for="(product, index) in getCartProducts"
+        v-for="(product, index) in getCartModalProducts"
         :key="index"
         class="row align-items-center"
         style="margin-bottom: 10px;"
@@ -25,15 +24,13 @@
         </div>
         <div class="col-7" style="max-height: 130px;">
           <h5>{{ product.name }}</h5>
-          <!-- <div class="float-left">Amount: 1</div>
-          <div class="float-right">{{ product.price }}</div> -->
           <div>{{ priceText }}: ${{ product.price }}</div>
         </div>
       </div>
       <div class="row align-items-end" v-if="hasProduct()">
         <div class="col">
           <span class="float-left"
-            >{{ totalText }}: ${{ totalPrice(getCartProducts) }}</span
+            >{{ totalText }}: ${{ totalPrice(getCartModalProducts) }}</span
           >
         </div>
         <div class="col">
@@ -62,9 +59,13 @@ export default {
       products: [],
     };
   },
+  created() {
+    this.loadCartModalProducts();
+  },
   methods: {
     ...mapActions({
       showOrHiddenPopupCart: "shop/showOrHiddenPopupCart",
+      loadCartModalProducts: "shop/loadCartModalProducts",
     }),
     hasProduct() {
       return this.getCartProductSkus.length > 0;
@@ -77,7 +78,7 @@ export default {
     ...mapGetters({
       getPopupCart: "shop/getPopupCart",
       getCartProductSkus: "shop/getCartProductSkus",
-      getCartProducts: "shop/getCartProducts",
+      getCartModalProducts: "shop/getCartModalProducts",
     }),
   },
 };
