@@ -1,0 +1,8 @@
+{
+  "shop": {
+    "states": {
+      "empty": "Please select a province/state",
+      "qc": "Quebec"
+    }
+  }
+}

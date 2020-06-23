@@ -1,0 +1,8 @@
+{
+  "shop": {
+    "countries": {
+      "empty": "Veuillez choisir un pays",
+      "ca": "Canada"
+    }
+  }
+}
