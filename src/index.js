@@ -43,7 +43,10 @@ export default {
       "shop",
       shopModule(options.endpoints, options.axios)
     );
-    options.store.registerModule("profile", profileModule(options.endpoints));
+    options.store.registerModule(
+      "profile",
+      profileModule(options.endpoints, options.axios)
+    );
 
     options.axios.interceptors.request.use(function (config) {
       config.headers["shop-website"] = options.website;

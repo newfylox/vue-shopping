@@ -43,7 +43,7 @@ export const shopModule = (endpoints, axios) => {
     },
     getPublishableKey: () => {
       return axios.get("transactions/new").then((res) => {
-        return res.data.publishable_key;
+        return res.data;
       });
     },
     loadCart: ({ getters }) => {
@@ -153,6 +153,12 @@ export const shopModule = (endpoints, axios) => {
     getShowProductModal: (state) => state.showProductModal,
     getPopupCart: (state) => state.showPopupCart,
     hasProduct: (state) => state.cartProductSkus.length > 0,
+    subTotal: (state, getters) => {
+      return getters.getCartProducts.reduce(
+        (current, next) => current + next.price,
+        0
+      );
+    },
   };
 
   return {

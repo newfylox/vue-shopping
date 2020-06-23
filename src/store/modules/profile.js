@@ -1,4 +1,4 @@
-export const profileModule = (endpoints) => {
+export const profileModule = (endpoints, axios) => {
   const state = {
     profiles: [],
     defaultProfileId: null,
@@ -10,6 +10,14 @@ export const profileModule = (endpoints) => {
         .getProfiles()
         .then((profiles) => {
           commit("SET_PROFILES", profiles);
+        })
+        .catch(console.error);
+    },
+    getDefaultProfile: ({ getters }) => {
+      return axios
+        .get(`profiles/${getters.defaultProfileId}`)
+        .then((res) => {
+          return res.data;
         })
         .catch(console.error);
     },

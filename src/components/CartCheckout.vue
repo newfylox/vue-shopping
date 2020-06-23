@@ -30,7 +30,7 @@
         </li>
       </ul>
       <h3 class="total">
-        {{ $t("shop.cart_checkout.total") }} ${{ totalPrice() }}
+        {{ $t("shop.cart_checkout.subtotal") }} ${{ subTotal }}
       </h3>
     </div>
     <div v-if="!hasProduct" class="checkout-message">
@@ -56,6 +56,7 @@ export default {
       getCartProducts: "shop/getCartProducts",
       hasProduct: "shop/hasProduct",
       defaultProfileId: "profile/defaultProfileId",
+      subTotal: "shop/subTotal",
     }),
   },
   methods: {
@@ -63,12 +64,6 @@ export default {
       loadCartProducts: "shop/loadCartProducts",
       removeProduct: "shop/removeProduct",
     }),
-    totalPrice() {
-      return this.getCartProducts.reduce(
-        (current, next) => current + next.price,
-        0
-      );
-    },
     remove(index) {
       this.removeProduct(index);
     },

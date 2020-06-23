@@ -29,6 +29,24 @@
           @click="onSubmit()"
           >{{ $t("shop.stripe_form.button_pay") }}</b-button
         >
+        <div v-if="profile">
+          <br />
+          <h6 class="subtotal">
+            {{ $t("shop.stripe_form.subtotal") }} ${{ this.c(subTotal) }}
+          </h6>
+          <h6 class="shipping">
+            {{ $t("shop.stripe_form.shipping") }} ${{ this.c(shipping) }}
+          </h6>
+          <h6 v-if="hasTVQ" class="tvq">
+            {{ $t("shop.stripe_form.tvq") }} ${{ this.c(TVQ) }}
+          </h6>
+          <h6 v-if="hasTPS" class="tps">
+            {{ $t("shop.stripe_form.tps") }} ${{ this.c(TPS) }}
+          </h6>
+          <h5 class="total">
+            {{ $t("shop.stripe_form.total") }} ${{ this.c(total) }}
+          </h5>
+        </div>
       </b-card>
     </div>
   </div>
@@ -47,15 +65,19 @@ export default {
       client_secret: null,
       hasError: false,
       payed: false,
+      profile: null,
+      shipping: 0,
       initiate: false,
       representativeCode: "",
     };
   },
   updated() {
     if (this.hasProduct && this.defaultProfileId && !this.initiate) {
+      this.getDefaultProfile().then((profile) => (this.profile = profile));
       this.getPublishableKey()
-        .then((key) => {
-          this.stripe = Stripe(key);
+        .then((data) => {
+          this.stripe = Stripe(data.publishable_key);
+          this.shipping = data.shipping;
           this.elements = this.stripe.elements();
           this.initiate = true;
         })
@@ -78,7 +100,32 @@ export default {
     ...mapGetters({
       hasProduct: "shop/hasProduct",
       defaultProfileId: "profile/defaultProfileId",
+      subTotal: "shop/subTotal",
     }),
+    hasTVQ() {
+      return this.profile.state[0].toLowerCase() == "q";
+    },
+    hasTPS() {
+      return this.profile.country[0].toLowerCase() == "c";
+    },
+    subTotalWithShipping() {
+      return this.subTotal + this.shipping;
+    },
+    TVQ() {
+      if (this.hasTVQ) {
+        return 0.09975 * this.subTotalWithShipping;
+      }
+      return 0;
+    },
+    TPS() {
+      if (this.hasTPS) {
+        return 0.05 * this.subTotalWithShipping;
+      }
+      return 0;
+    },
+    total() {
+      return this.subTotalWithShipping + this.TVQ + this.TPS;
+    },
   },
   methods: {
     ...mapActions({
@@ -87,7 +134,11 @@ export default {
       loadCart: "shop/loadCart",
       getPublishableKey: "shop/getPublishableKey",
       setDefaultProfileId: "profile/setDefaultProfileId",
+      getDefaultProfile: "profile/getDefaultProfile",
     }),
+    c(value) {
+      return value.toFixed(2);
+    },
     showErrors(error) {
       var displayError = document.getElementById("card-errors");
       if (error) {
